@@ -1,0 +1,12 @@
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\bin\Debug\net8.0\MISA.Core.deps.json
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\bin\Debug\net8.0\MISA.Core.dll
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\bin\Debug\net8.0\MISA.Core.pdb
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.AssemblyInfoInputs.cache
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.AssemblyInfo.cs
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.csproj.CoreCompileInputs.cache
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.dll
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\refint\MISA.Core.dll
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.pdb
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\ref\MISA.Core.dll
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.csproj.AssemblyReference.cache

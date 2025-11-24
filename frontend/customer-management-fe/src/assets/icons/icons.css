@@ -1,0 +1,257 @@
+.icon {
+  mask-image: url("../images/ICON.svg");
+  mask-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.icon-logo{
+  background: url("../images/Logo.svg");
+  mask-repeat: no-repeat;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+}
+
+.icon-dashboard {
+  background-color: #1f2229;
+  mask-position: 0px -272px;
+  width: 16px;
+  height: 16px;
+}
+
+.icon-customers {
+  mask-position: -224px -288px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-opportunitys {
+  mask-position: -160px -304px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-quote{
+  mask-position: -64px -48px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-sale-order{
+  mask-position: -160px -240px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-products{
+  mask-position: -16px -48px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-report{
+  mask-position: -32px -272px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-other-grey{
+  mask-position: -48px -272px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-folder{
+  mask-position: -208px -177px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+
+}
+
+.icon-arrow-down{
+  mask-position: -48px -32px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background-color: #1f2229;
+}
+
+.icon-refresh{
+  mask-position: -352px -32px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-search{
+  mask-position: 0px -1425px;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  background-color: #1f2229;
+}
+
+.icon-ai-search{
+  background: url("../images/Icon-AI.svg");
+  mask-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  z-index: 1;
+}
+
+.icon-statistics{
+  mask-position: -16px -1425px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-add-white{
+  mask-position: -240px -128px;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+  background-color: #ffffff;
+}
+
+.icon-import-blue{
+  mask-position: -176px -192px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-btn-more{
+  mask-position: -48px 0;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-dropdown{
+  mask-position: -128px -304px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+
+.icon-tel {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+
+  /* Dùng background thay cho mask */
+  background-image: url("../images/ICON.svg"); /* đường dẫn tới sprite */
+  background-repeat: no-repeat;
+  background-position: -320px -48px; /* vị trí icon trong sprite */
+  background-size: auto; /* hoặc chỉnh nếu muốn scale sprite */
+}
+
+.icon-edit {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/edit-blue.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+}
+
+.icon-up {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/arrow-up.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+  margin-left: 6px;
+}
+
+.icon-down {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/arrow-down.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+  margin-left: 5px;
+}
+
+.icon-sliders {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/sliders.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+.icon-export {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/export.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+}
+
+.icon-delete {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/delete-red.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+}
+
+.icon-sort {
+  display: inline-block;
+  width: 12px;   /* kích thước icon muốn hiển thị */
+  height: 12px;
+  background-image: url("../images/sort-icon.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+}
+
+
+
+.icon-sort-setting{
+  mask-position: -272px -176px;
+  width: 16px;
+  height: 16px;
+  background-color: #1f2229;
+}
+.icon-account {
+    display: inline-block;
+    width: 48px;    /* giống pseudo-element trước */
+    height: 48px;
+    background-image: url("https://crmcdng2.misacdn.net/assets/Images/icon/icon_collection.svg");
+    background-repeat: no-repeat;
+    background-position: 0 -848px;  /* vị trí icon trong sprite */
+    background-size: auto;  /* chỉnh nếu muốn scale toàn bộ sprite */
+}
+
+

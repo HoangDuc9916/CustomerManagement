@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "THovDO+JJ0qHIz46En0TiaweSkWwOqyoWFUnCZnAgrc=",
+  "Source": "MISA.CustomerManagement.Api",
+  "BasePath": "_content/MISA.CustomerManagement.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
