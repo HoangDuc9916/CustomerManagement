@@ -6,6 +6,7 @@ using MISA.Core.Interfaces.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -387,6 +388,37 @@ WHERE customer_id = @CustomerId";
             }
             return sb.ToString();
         }
+
+
+
+        public async Task<List<Customer>> ExportCustomersAsync(List<string> ids, List<string> columns)
+        {
+            if (ids == null || !ids.Any())
+                return new List<Customer>();
+
+            // Loại bỏ null
+            ids = ids.Where(x => !string.IsNullOrEmpty(x)).ToList();
+
+            if (!ids.Any())
+                return new List<Customer>();
+
+            using (var connection = dbConnection)
+            {
+                string selectedCols = columns != null && columns.Any()
+                    ? string.Join(",", columns)
+                    : "*";
+
+                string sql = $@"
+            SELECT {selectedCols}
+            FROM customer
+            WHERE customer_id IN @Ids;
+        ";
+
+                var result = await connection.QueryAsync<Customer>(sql, new { Ids = ids });
+                return result.ToList();
+            }
+        }
+
     }
 
 }

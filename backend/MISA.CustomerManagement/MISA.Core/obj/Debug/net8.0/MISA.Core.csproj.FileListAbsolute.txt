@@ -10,3 +10,4 @@ D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net
 D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.pdb
 D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\ref\MISA.Core.dll
 D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.csproj.AssemblyReference.cache
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Core\obj\Debug\net8.0\MISA.Core.sourcelink.json

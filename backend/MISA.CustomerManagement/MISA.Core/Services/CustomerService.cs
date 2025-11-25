@@ -2,6 +2,7 @@
 using MISA.Core.Entities;
 using MISA.Core.Interfaces.Repository;
 using MISA.Core.Interfaces.Services;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -223,6 +224,13 @@ namespace MISA.Core.Services
 
             return result.inserted;
         }
+
+
+        public async Task<List<Customer>> ExportCustomersAsync(List<string> ids, List<string> columns)
+        {
+            return await _customerRepository.ExportCustomersAsync(ids, columns);
+        }
+
 
     }
 

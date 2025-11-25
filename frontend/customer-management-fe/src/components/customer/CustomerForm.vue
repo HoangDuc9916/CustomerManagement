@@ -14,23 +14,25 @@
           </div>
         </div>
 
+        <!-- FORM ACTION BUTTONS -->
         <div class="form-actions-header d-flex align-items-center gap-8">
-          <button class="ms-button btn btn-secondary" @click="$emit('cancel')"><span class="button-cancel">Hủy bỏ</span></button>
 
+          <!-- Button Hủy bỏ -->
+          <MSButton type="secondary" text="Hủy bỏ" @click="$emit('cancel')" />
+
+          <!-- Button Lưu và thêm -->
           <div class="crm-button-import">
-            <button class="ms-button ms-button-import btn btn-secondary3 d-flex align-items-center" type="button"
-              @click="saveAndContinue">
-              <div class="button-import-excel">{{ editing ? "Lưu và Thêm" : "Lưu và Thêm" }}</div>
-            </button>
+            <MSButton type="secondary3" text="Lưu và Thêm" @click="saveAndContinue" />
           </div>
 
-          <button class="ms-button btn btn-primary button-save" type="submit" @click.prevent="saveCustomer">
-            {{ editing ? "Lưu" : "Lưu" }}
-          </button>
+          <!-- Button Lưu -->
+          <MSButton type="primary" text="Lưu" @click="saveCustomer($event)" />
+
         </div>
       </div>
     </article>
 
+    <!-- FORM -->
     <form class="form-layout">
       <div class="form-img-add">
         <div class="title-image">Ảnh</div>
@@ -40,8 +42,10 @@
         </div>
         <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" style="display:none" />
       </div>
+
       <span class="form-title-add">Thông tin chung</span>
-      <!-- Row 1 -->
+
+      <!-- ROW 1 -->
       <div class="form-row">
         <div class="form-group">
           <label>Mã khách hàng</label>
@@ -62,13 +66,13 @@
         </div>
       </div>
 
-      <!-- Row 2 -->
+      <!-- ROW 2 -->
       <div class="form-row">
         <div class="form-group">
           <label>Loại khách hàng</label>
           <div class="input-wrapper">
             <select v-model="model.customerType">
-              <option value="" style="">Chọn loại khách hàng</option>
+              <option value="">Chọn loại khách hàng</option>
               <option value="VIP">VIP</option>
               <option value="LKHA">LKHA</option>
               <option value="NBH01">NBH01</option>
@@ -87,7 +91,7 @@
         </div>
       </div>
 
-      <!-- Row 3 -->
+      <!-- ROW 3 -->
       <div class="form-row">
         <div class="form-group">
           <label>Email <span class="star">*</span></label>
@@ -106,7 +110,7 @@
         </div>
       </div>
 
-      <!-- Row 4 -->
+      <!-- ROW 4 -->
       <div class="form-row">
         <div class="form-group">
           <label>Địa chỉ giao hàng</label>
@@ -123,7 +127,7 @@
         </div>
       </div>
 
-      <!-- Row 5 -->
+      <!-- ROW 5 -->
       <div class="form-row">
         <div class="form-group">
           <label>Ngày mua gần nhất</label>
@@ -140,7 +144,7 @@
         </div>
       </div>
 
-      <!-- Row 6: input 1 mình -->
+      <!-- ROW 6 -->
       <div class="form-row">
         <div class="form-group" style="flex: 0 0 49.5%;">
           <label>Hàng hóa đã mua</label>
@@ -158,6 +162,7 @@
 <script setup>
 import { reactive, ref } from "vue";
 import api from "@/api/customerApi";
+import MSButton from "@/components/ms-button/MS-Button.vue"
 
 const emit = defineEmits(["saved", "added-and-continue", "cancel"]);
 
@@ -202,31 +207,69 @@ const clearError = (field) => {
   errors[field] = "";
   errors.general = "";
 };
+/**
+ * Created by: Duchc - Hoàng Chí Đức - 24112025
+ */
+const validateSequential = () => {
+  // Reset lỗi trước khi validate
+  errors.fullName = "";
+  errors.phone = "";
+  errors.email = "";
+  errors.general = "";
 
-const validate = () => {
-  let valid = true;
-  Object.keys(errors).forEach(k => errors[k] = "");
-
+  // 1) Validate FullName
   if (!model.fullName?.trim()) {
     errors.fullName = "Tên khách hàng không để trống";
-    valid = false;
+    return false; // Dừng ở đây
   }
+
+  // 2) Validate Phone
   if (!model.phone?.trim()) {
     errors.phone = "Số điện thoại không để trống";
-    valid = false;
+    return false;
   } else if (!/^\d{10,11}$/.test(model.phone)) {
     errors.phone = "Số điện thoại phải 10–11 chữ số";
-    valid = false;
+    return false;
   }
+
+  // 3) Validate Email
   if (!model.email?.trim()) {
     errors.email = "Email không để trống";
-    valid = false;
+    return false;
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(model.email)) {
     errors.email = "Email không hợp lệ";
-    valid = false;
+    return false;
   }
-  return valid;
+
+  // Nếu tất cả hợp lệ
+  return true;
 };
+
+
+// const validate = () => {
+//   let valid = true;
+//   Object.keys(errors).forEach(k => errors[k] = "");
+
+//   if (!model.fullName?.trim()) {
+//     errors.fullName = "Tên khách hàng không để trống";
+//     valid = false;
+//   }
+//   if (!model.phone?.trim()) {
+//     errors.phone = "Số điện thoại không để trống";
+//     valid = false;
+//   } else if (!/^\d{10,11}$/.test(model.phone)) {
+//     errors.phone = "Số điện thoại phải 10–11 chữ số";
+//     valid = false;
+//   }
+//   if (!model.email?.trim()) {
+//     errors.email = "Email không để trống";
+//     valid = false;
+//   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(model.email)) {
+//     errors.email = "Email không hợp lệ";
+//     valid = false;
+//   }
+//   return valid;
+// };
 
 // Reset form
 const resetForm = () => {
@@ -249,7 +292,6 @@ const prepareNewCustomer = async () => {
     model.customerCode = "";
   }
 };
-
 
 // Load customer khi edit
 const loadCustomer = async (id) => {
@@ -317,8 +359,9 @@ const buildPayload = () => ({
   IsDelete: "1"
 });
 
-const saveCustomer = async () => {
-  if (!validate()) return;
+const saveCustomer = async (event) => {
+  event.preventDefault();
+  if (!validateSequential()) return;
   try {
     const payload = buildPayload();
     if (editing.value) {
@@ -342,7 +385,7 @@ const saveCustomer = async () => {
 };
 
 const saveAndContinue = async () => {
-  if (!validate()) return;
+  if (!validateSequential()) return;
   try {
     const payload = buildPayload();
     if (editing.value) {
@@ -376,11 +419,12 @@ const saveAndContinue = async () => {
   background-color: #fff;
   border-radius: 4px;
 }
-.title-image{
+
+.title-image {
   font-size: 18px !important;
   font-weight: 500;
   margin-bottom: 16px;
-   text-shadow: 0.02em 0 0 currentColor;
+  text-shadow: 0.02em 0 0 currentColor;
 }
 
 .star {
@@ -404,7 +448,7 @@ const saveAndContinue = async () => {
   font-weight: 500;
   color: #1f2229;
   margin-right: 8px;
-   text-shadow: 0.02em 0 0 currentColor;
+  text-shadow: 0.02em 0 0 currentColor;
 }
 
 .form-title-add {
@@ -469,13 +513,15 @@ const saveAndContinue = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0f0f0; /* màu nền khi chưa có ảnh */
+  background-color: #f0f0f0;
+  /* màu nền khi chưa có ảnh */
 }
 
 .avatar-account img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* đảm bảo ảnh cover toàn bộ khung tròn */
+  object-fit: cover;
+  /* đảm bảo ảnh cover toàn bộ khung tròn */
   display: block;
 }
 
@@ -521,7 +567,7 @@ const saveAndContinue = async () => {
   padding: 0;
   margin: 0;
   color: #1f2229;
-   text-shadow: 0.02em 0 0 currentColor;
+  text-shadow: 0.02em 0 0 currentColor;
 }
 
 .ms-title-text {
@@ -572,7 +618,8 @@ const saveAndContinue = async () => {
 .form-group input,
 .form-group select {
   flex: 1 1 250px;
-  min-width: 510px;      /* tránh quá ngắn */
+  min-width: 510px;
+  /* tránh quá ngắn */
 
   height: 32px;
   font-size: 13px;
@@ -603,9 +650,12 @@ const saveAndContinue = async () => {
   color: red;
   font-size: 12px;
   margin-top: 4px;
-  width: calc(100% - 140px); /* align với input */
-   width: auto;      /* tự động theo input */
-  position: static; /* thay vì absolute */
+  width: calc(100% - 140px);
+  /* align với input */
+  width: auto;
+  /* tự động theo input */
+  position: static;
+  /* thay vì absolute */
 
   left: 140px;
   bottom: -18px;
@@ -681,7 +731,8 @@ const saveAndContinue = async () => {
   position: relative;
   z-index: 1;
 }
-.button-import-excel{
+
+.button-import-excel {
   top: 2px;
 }
 
@@ -691,9 +742,45 @@ const saveAndContinue = async () => {
   transform: translateY(2px);
 }
 
-.button-save{
-   line-height: normal !important;
+.button-save {
+  line-height: normal !important;
   padding-top: 1px !important;
+}
+
+/* Date picker đẹp mắt */
+input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  appearance: none;
+  /* tắt style mặc định trình duyệt */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* Calendar icon (hiển thị bên phải) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.7;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Focus */
+input[type="date"]:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  outline: none;
 }
 
 
@@ -709,44 +796,45 @@ const saveAndContinue = async () => {
   color: #4262f0 !important;
 }
 
-/* Responsive */
+
 /* Responsive */
 @media (max-width: 1024px) {
-  /* Dòng form vẫn 2 cột nhưng input co lại */
   .form-row {
-    flex-wrap: wrap; /* cho phép xuống dòng nếu quá nhỏ */
+    flex-wrap: wrap;
   }
 
   .form-group input,
   .form-group select {
-    min-width: 200px; /* input co lại khi màn hình nhỏ */
-    flex: 1 1 auto;   /* giữ flex nhưng co được */
+    min-width: 200px;
+    flex: 1 1 auto;
   }
 }
 
 @media (max-width: 768px) {
   .form-row {
-    flex-direction: column; /* xuống 1 cột */
+    flex-direction: column;
   }
+
   .form-group {
     width: 100%;
   }
+
   .form-group input,
   .form-group select {
-    min-width: 100%; /* chiếm full width khi cột đơn */
+    min-width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .form-group label {
-    font-size: 12px; /* chữ label nhỏ hơn để vừa */
-    width: 140px;    /* vẫn giữ khoảng cách cố định với input */
+    font-size: 12px;
+    width: 140px;
   }
+
   .form-group input,
   .form-group select {
     font-size: 12px;
     padding: 4px 8px;
   }
 }
-
 </style>

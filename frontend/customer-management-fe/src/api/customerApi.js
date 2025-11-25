@@ -75,6 +75,21 @@ export const getNewCustomerCode = async () => {
   return res.data || "";
 };
 
+/**
+ * Export khách hàng ra Excel
+ * @param {Array} ids - Danh sách ID được chọn
+ * @param {Array} columns - Danh sách cột cần export
+ */
+export const exportCustomers = async (ids = [], columns = []) => {
+  const payload = { ids, columns };
+
+  const response = await api.post("/customers/export", payload, {
+    responseType: "blob", // quan trọng để tải file
+  });
+
+  return response;
+};
+
 
 export default {
   getCustomers,
@@ -85,5 +100,6 @@ export default {
   importCustomers,
   deleteCustomerBulk,
   getCustomersSearch,
-  getNewCustomerCode
+  getNewCustomerCode,
+  exportCustomers
 };

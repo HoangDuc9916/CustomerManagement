@@ -1,19 +1,38 @@
 <template>
   <div v-if="modelValue" class="confirm-dialog-backdrop">
     <div class="confirm-dialog">
-      <p>{{ message }}</p>
-      <div class="actions">
-        <button class="btn btn-secondary" @click="cancel">Hủy</button>
-        <button class="btn btn-danger" @click="confirm">Xóa</button>
+      <p class="confirm-text">{{ message }}</p>
+
+      <div class="actions" :class="{ 'actions-center': hideCancel }">
+        <!-- Nút Hủy chỉ hiện khi hideCancel = false -->
+        <MSButton
+          v-if="!hideCancel"
+          text="Hủy bỏ"
+          customClass="confirm-btn-cancel"
+          @click="cancel"
+        />
+
+        <!-- Nút chính dùng confirmText + confirmClass -->
+        <MSButton
+          :text="confirmText || 'Xóa'"
+          :customClass="confirmClass || 'confirm-btn-primary'"
+          @click="confirm"
+        />
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import MSButton from "@/components/ms-button/MS-Button.vue";
+
 defineProps({
-  message: { type: String, default: "Bạn có chắc muốn xóa?" },
-  modelValue: { type: Boolean, default: false }
+  message: String,
+  modelValue: Boolean,
+  confirmText: String,
+  confirmClass: String,
+  hideCancel: { type: Boolean, default: false } // prop mới
 });
 
 const emit = defineEmits(["update:modelValue", "confirm", "cancel"]);
@@ -29,6 +48,7 @@ const cancel = () => {
 };
 </script>
 
+
 <style scoped>
 .confirm-dialog-backdrop {
   position: fixed;
@@ -38,56 +58,66 @@ const cancel = () => {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  animation: fadeIn 0.2s ease;
+}
+
+.actions-center {
+  justify-content: center;
 }
 
 .confirm-dialog {
   background-color: #fff;
-  padding: 20px 28px;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  min-width: 300px;
-  max-width: 90%;
+  padding: 28px 32px;
+  border-radius: 12px;
+  min-width: 380px;
   text-align: center;
-  animation: slideUp 0.2s ease;
 }
 
-.confirm-dialog p {
+.confirm-text {
   font-size: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   color: #333;
 }
 
-.confirm-dialog .actions {
+.actions {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
-.confirm-dialog .btn {
-  padding: 6px 20px;
-  border: none;
-  border-radius: 5px;
+.confirm-btn-cancel {
+  height: 32px;
+  line-height: 20px;
+  padding: 0 17px;
+  font-size: 13px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
-  transition: 0.2s;
+  background-color: #e2e4e9;
+  border: 1px solid #e2e4e9;
+  color: #1f2229;
 }
 
-.btn-danger {
-  background-color: #f44336;
+.confirm-btn-primary {
+  height: 32px;
+  line-height: 20px;
+  padding: 0 16px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ec4243;
+  border: 1px solid #ec4243;
   color: #fff;
 }
-.btn-danger:hover {
-  background-color: #e53935;
-}
 
-.btn-secondary {
-  background-color: #e0e0e0;
-  color: #000;
+/* nút import xanh khi dùng toolbar */
+.confirm-btn-import {
+  height: 32px;
+  line-height: 20px;
+  padding: 0 16px;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #3a77f7;
+  border: 1px solid #3a77f7;
+  color: #fff;
 }
-.btn-secondary:hover {
-  background-color: #d5d5d5;
-}
-
-@keyframes fadeIn { from {opacity: 0;} to {opacity:1;} }
-@keyframes slideUp { from {transform: translateY(10px);} to {transform: translateY(0);} }
 </style>

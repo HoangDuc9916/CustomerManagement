@@ -22,5 +22,7 @@ namespace MISA.Core.Interfaces.Repository
 
         (int inserted, int duplicatePhones, int duplicateEmails) BulkInsertWithDuplicates(List<Customer> customers);
 
+        Task<List<Customer>> ExportCustomersAsync(List<string> ids, List<string> columns);
+
     }
 }

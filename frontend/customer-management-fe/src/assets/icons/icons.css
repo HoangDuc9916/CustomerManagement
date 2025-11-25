@@ -182,6 +182,28 @@
   margin-left: 6px;
 }
 
+.icon-up2 {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/arrow-up2.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+  margin-left: 6px;
+}
+
+.icon-down2 {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/arrow-down3.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+  margin-left: 5px;
+}
+
 .icon-down {
   display: inline-block;
   width: 16px;   /* kích thước icon muốn hiển thị */
@@ -221,6 +243,16 @@
   width: 16px;   /* kích thước icon muốn hiển thị */
   height: 16px;
   background-image: url("../images/delete-red.svg");
+  background-repeat: no-repeat;
+  background-size: contain;  /* tự scale SVG vừa khung */
+  background-position: center; /* căn giữa SVG */
+}
+
+.icon-ticker {
+  display: inline-block;
+  width: 16px;   /* kích thước icon muốn hiển thị */
+  height: 16px;
+  background-image: url("../images/ticker2.svg");
   background-repeat: no-repeat;
   background-size: contain;  /* tự scale SVG vừa khung */
   background-position: center; /* căn giữa SVG */

@@ -5,6 +5,7 @@
         <thead>
           <tr>
             <th>
+              <!-- Checkbox all trên page -->
               <input type="checkbox" class="ml-32" :checked="allSelected" @change="toggleSelectAll" />
             </th>
             <th v-for="col in columns" :key="col.key" class="sortable" @mouseover="hoverColumn = col.key"
@@ -20,8 +21,9 @@
         <tbody>
           <tr v-for="item in tableData" :key="item.customerId" class="table-row" @dblclick="onEdit(item)">
             <td class="checkbox-style">
-              <input type="checkbox" class="ml-32" :checked="selectedIds.includes(item.customerId)"
-                @change="toggleOne(item.customerId)" />
+              <!-- Checkbox từng dòng -->
+              <input type="checkbox" class="ml-32" :checked="isChecked(item.customerId)"
+                @change="() => toggleOne(item.customerId)" />
             </td>
             <td>{{ item.type || "-" }}</td>
             <td><a class="code">{{ item.code }}</a></td>
@@ -30,11 +32,11 @@
             <td>{{ item.address || "-" }}</td>
             <td><span class="icon-tel mr-8 mt-8"></span><a class="phone">{{ item.phone || "-" }}</a></td>
             <td>{{ item.lastPurchaseDateFormatted || "-" }}</td>
-            <td>{{ item.products|| "-" }}</td>
+            <td>{{ item.products || "-" }}</td>
             <td>{{ item.productNames || "-" }}</td>
           </tr>
           <tr v-if="!tableData.length">
-            <td colspan="11" class="text-center">Không có dữ liệu</td>
+            <td colspan="10" class="text-center">Không có dữ liệu</td>
           </tr>
         </tbody>
       </table>
@@ -49,8 +51,8 @@
     <!-- Sort Menu (nổi) -->
     <div v-if="showSortMenu && sortColumn" class="sort-menu select-style"
       :style="{ top: sortMenuTop + 'px', left: sortMenuLeft + 'px' }">
-      <div @click="changeSort(sortColumn, 'asc')">Tăng dần <span class="icon-up"></span></div>
-      <div @click="changeSort(sortColumn, 'desc')">Giảm dần <span class="icon-down"></span></div>
+      <div @click="changeSort(sortColumn, 'asc')"><span class="icon-up"></span> Tăng dần</div>
+      <div @click="changeSort(sortColumn, 'desc')"><span class="icon-down"></span> Giảm dần</div>
     </div>
 
     <!-- Paging -->
@@ -59,16 +61,34 @@
         <span class="icon-sliders"></span> Tổng số: <span class="strong-total">{{ total }}</span>
       </div>
 
-
       <div class="paging-right-container" ref="pageMenuRef">
         <div class="paging-center select-style" @click.stop="togglePageMenu">
           {{ pageSize }} Bản ghi trên trang
           <span class="icon icon-arrow-down"></span>
           <div v-if="showPageMenu" class="page-size-menu select-style">
-            <div class="menu-item" @click.stop="setPageSize(10)">10 Bản ghi <span v-if="pageSize === 10">✓</span></div>
-            <div class="menu-item" @click.stop="setPageSize(20)">20 Bản ghi <span v-if="pageSize === 20">✓</span></div>
-            <div class="menu-item" @click.stop="setPageSize(50)">50 Bản ghi <span v-if="pageSize === 50">✓</span></div>
-            <div class="menu-item" @click.stop="setPageSize(100)">100 Bản ghi <span v-if="pageSize === 100">✓</span>
+            <div class="menu-item" :class="{ selected: pageSize === 10 }" @click.stop="setPageSize(10)">
+              10 Bản ghi trên trang
+              <span v-if="pageSize === 10" class="selected-icon">
+                <span class="icon-ticker"></span>
+              </span>
+            </div>
+            <div class="menu-item" :class="{ selected: pageSize === 20 }" @click.stop="setPageSize(20)">
+              20 Bản ghi trên trang
+              <span v-if="pageSize === 20" class="selected-icon">
+                <span class="icon-ticker"></span>
+              </span>
+            </div>
+            <div class="menu-item" :class="{ selected: pageSize === 50 }" @click.stop="setPageSize(50)">
+              50 Bản ghi trên trang
+              <span v-if="pageSize === 50" class="selected-icon">
+                <span class="icon-ticker"></span>
+              </span>
+            </div>
+            <div class="menu-item" :class="{ selected: pageSize === 100 }" @click.stop="setPageSize(100)">
+              100 Bản ghi trên trang
+              <span v-if="pageSize === 100" class="selected-icon">
+                <span class="icon-ticker"></span>
+              </span>
             </div>
           </div>
         </div>
@@ -102,20 +122,44 @@ const emit = defineEmits([
   "sort-change",
 ]);
 
-// ---------------- CHECKBOX ----------------
-const selectedIds = ref([...props.selectedRows]);
-watch(() => props.selectedRows, (newVal) => { selectedIds.value = [...newVal]; });
-const allSelected = computed(() => props.tableData.length && selectedIds.value.length === props.tableData.length);
+// ---------------- CHECKBOX MULTI-PAGE ----------------
+const selectedIdsSet = ref(new Set([...props.selectedRows]));
+
+// watch prop selectedRows để sync khi parent update
+watch(() => props.selectedRows, (newVal) => {
+  selectedIdsSet.value = new Set(newVal);
+});
+
+// checkbox row
+const isChecked = (id) => selectedIdsSet.value.has(id);
+
+// checkbox all trên page
+const allSelected = computed(() =>
+  props.tableData.length && props.tableData.every(i => selectedIdsSet.value.has(i.customerId))
+);
+
+// toggle all trên page
 const toggleSelectAll = () => {
-  if (allSelected.value) selectedIds.value = [];
-  else selectedIds.value = props.tableData.map(i => i.customerId);
-  emit("update:selected-rows", selectedIds.value);
+  const idsOnPage = props.tableData.map(i => i.customerId);
+  const isAllSelected = idsOnPage.every(id => selectedIdsSet.value.has(id));
+  if (isAllSelected) {
+    idsOnPage.forEach(id => selectedIdsSet.value.delete(id));
+  } else {
+    idsOnPage.forEach(id => selectedIdsSet.value.add(id));
+  }
+  emitSelected();
 };
+
+// toggle 1 row
 const toggleOne = (id) => {
-  const index = selectedIds.value.indexOf(id);
-  if (index !== -1) selectedIds.value.splice(index, 1);
-  else selectedIds.value.push(id);
-  emit("update:selected-rows", selectedIds.value);
+  if (selectedIdsSet.value.has(id)) selectedIdsSet.value.delete(id);
+  else selectedIdsSet.value.add(id);
+  emitSelected();
+};
+
+// emit selectedIdsSet ra parent
+const emitSelected = () => {
+  emit("update:selected-rows", Array.from(selectedIdsSet.value));
 };
 
 // ---------------- EDIT / DELETE ----------------
@@ -163,13 +207,11 @@ const toggleSortMenu = (col) => {
 
   nextTick(() => {
     const headerEl = headerRefs.value[col];
-  if (headerEl) {
-    const rect = headerEl.getBoundingClientRect();
-
-    // GIỐNG DROPDOWN: dùng fixed và tính theo viewport
-    sortMenuTop.value = rect.bottom + window.scrollY;
-    sortMenuLeft.value = rect.left + window.scrollX;
-  }
+    if (headerEl) {
+      const rect = headerEl.getBoundingClientRect();
+      sortMenuTop.value = rect.bottom + window.scrollY;
+      sortMenuLeft.value = rect.left + window.scrollX;
+    }
   });
 };
 
@@ -180,7 +222,6 @@ const changeSort = (col, dir) => {
 </script>
 
 <style scoped>
-/* === Các style giữ nguyên của bạn === */
 .customer-table-wrapper {
   display: flex;
   flex-direction: column;
@@ -204,9 +245,10 @@ const changeSort = (col, dir) => {
   text-align: center;
 }
 
-.strong-total{
+.strong-total {
   font-weight: 600;
 }
+
 /* Checkbox custom */
 .ms-table th:first-child input,
 .ms-table td:first-child input {
@@ -354,13 +396,14 @@ const changeSort = (col, dir) => {
 }
 
 .sort-menu {
-  position: fixed;   /* Quan trọng */
+  position: fixed;
+  /* Quan trọng */
   z-index: 2000;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 4px;
   min-width: 140px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .sort-menu div {
@@ -399,24 +442,40 @@ const changeSort = (col, dir) => {
   position: relative;
 }
 
+/* --- Paging center chỉnh icon sát text --- */
 .paging-center {
-  padding: 6px 10px;
+  padding: 6px 0px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 180px;
+  padding-left: 15px !important;
+
+  /* CHỈNH QUAN TRỌNG */
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 4px;
+  justify-content: space-around;
   cursor: pointer;
   user-select: none;
   position: relative;
+  width: fit-content;
+  min-width: 170px;
+  padding-right: 10px;
+  padding-left: 10px;
 }
+
+.paging-center .icon-arrow-down {
+  margin-left: 2px;
+  position: relative;
+  top: 1px;
+}
+
 
 .page-size-menu {
   position: absolute;
-  bottom: 38px;
+  bottom: calc(100% + 1px);
   left: 0;
-  width: 180px;
+  width: 100%;
+  min-width: 100%;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -424,12 +483,49 @@ const changeSort = (col, dir) => {
   z-index: 999;
 }
 
+
+/* --- Item được chọn --- */
+.menu-item.selected {
+  color: #4290f2 !important;
+  font-weight: 600;
+}
+
+/* Tick lấy luôn màu từ item selected */
+.menu-item.selected span {
+  color: #4290f2 !important;
+}
+
 .menu-item {
-  padding: 10px 14px;
-  cursor: pointer;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  /* Căn icon và text bằng nhau */
+  padding: 8px 12px;
+  padding-left: 19px !important;
+  cursor: pointer;
 }
+
+.menu-item .selected-icon {
+  display: flex;
+  align-items: center;
+}
+
+.menu-item .icon-ticker {
+  margin-left: 4px;
+  position: relative;
+  top: 1px;
+  /* Hạ icon xuống 1 chút */
+}
+
+/* Màu khi selected */
+.menu-item.selected {
+  color: #4290f2;
+}
+
+.menu-item.selected .icon-ticker {
+  color: #4290f2;
+}
+
 
 .menu-item:hover {
   background: #f3f3f3;
@@ -457,7 +553,6 @@ const changeSort = (col, dir) => {
   text-decoration: underline;
   text-decoration-color: currentColor;
 }
-
 
 .paging-nav button {
   padding: 4px 10px;

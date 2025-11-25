@@ -16,26 +16,35 @@
 
           <!-- LEFT CONTENT KHI CÓ ROW ĐƯỢC CHỌN -->
           <div v-else class="toolbar-content-left d-flex flex-direction-row ml-8">
-            <button class="ms-button ms-button-import btn btn-secondary3 d-flex align-items-center ml-7">
-
+            <span class="selected-count ml-3">Đã chọn: <span class="selected-count-text">{{ selectedRows.length
+                }}</span></span>
+            <button class="ms-button ms-button-import btn btn-secondary3 d-flex align-items-center ml-7"
+              @click="downloadExcel">
               <div class="button-import-excel mr-8 mt-3">Export Excel</div>
               <i class="ms-button-icon icon-export"></i>
             </button>
+
             <div class="crm-toolbar-left d-flex flex-direction-row ml-7 align-items-center">
               <span class="icon-delete crm-delete" @click="onDeleteSelected"></span>
+
+
             </div>
+
           </div>
 
-
-          <!-- DROPDOWN chỉ hiển thị khi left content gốc đang hiện -->
+          <!-- DROPDOWN FILTER -->
           <div v-if="dropdownOpen && !selectedRows.length" class="filter-dropdown">
-            <div class="filter-item" @click="selectFilter('')">Tất cả khách hàng</div>
-            <div class="filter-item" @click="selectFilter('VIP')">VIP</div>
-            <div class="filter-item" @click="selectFilter('LKHA')">LKHA</div>
-            <div class="filter-item" @click="selectFilter('NBH01')">Nhà bán hàng 01</div>
+            <div class="filter-item" :class="{ selected: selectedLabel === 'Tất cả khách hàng' }"
+              @click="selectFilter('')">Tất cả khách hàng</div>
+            <div class="filter-item" :class="{ selected: selectedLabel === 'VIP' }" @click="selectFilter('VIP')">VIP
+            </div>
+            <div class="filter-item" :class="{ selected: selectedLabel === 'LKHA' }" @click="selectFilter('LKHA')">LKHA
+            </div>
+            <div class="filter-item" :class="{ selected: selectedLabel === 'NBH01' }" @click="selectFilter('NBH01')">Nhà
+              bán hàng 01</div>
           </div>
 
-          <!-- Edit / Refresh chỉ khi không chọn row -->
+          <!-- Edit / Refresh -->
           <div class="crm-toolbar-right" v-if="!selectedRows.length">
             <span class="crm-edit">Sửa</span>
             <span class="crm-refresh icon icon-refresh"></span>
@@ -57,8 +66,7 @@
           <div class="crm-ai-search">
             <div class="crm-ai-search-container">
               <div class="crm-ai-search-icon icon icon-search"></div>
-              <input type="text" class="crm-ai-search-input" placeholder="Tìm kiếm thông minh" autocomplete="combobox"
-                aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" v-model="searchTerm"
+              <input type="text" class="crm-ai-search-input" placeholder="Tìm kiếm thông minh" v-model="searchTerm"
                 @keyup.enter="onSearch">
               <div class="ai-icon-wrapper">
                 <div class="icon-ai-search"></div>
@@ -91,7 +99,8 @@
 
           <div class="crm-button" haspermisson="Import">
             <div class="crm-button-import">
-              <input type="file" ref="fileInput" @change="handleFileUpload" accept=".csv" style="display: none" />
+              <input type="file" ref="fileInput" @change="handleFileUpload" accept=".csv, .xlsx, .xls"
+                style="display: none" />
               <button class="ms-button ms-button-import btn btn-secondary3 d-flex align-items-center ml-7"
                 @click="triggerFileInput">
                 <i class="ms-button-icon icon icon-import-blue mr-8"></i>
@@ -117,85 +126,140 @@
         </div>
 
       </div>
+
     </div>
+
+    <!-- ConfirmDialog -->
+    <ConfirmDialog v-model="importConfirm.show"
+      :message="`Có ${importConfirm.duplicatePhones} bản ghi không hợp lệ do trùng phone và ${importConfirm.inserted} bản ghi hợp lệ.`"
+      @confirm="confirmImport" :confirmText="'Import'" :confirmClass="'confirm-btn-import'" :hideCancel="true" />
+
+
+
   </article>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import ToastMessage from "../common/ToastMessage.vue";
-import { importCustomers } from "@/api/customerApi";
+import ConfirmDialog from "../common/ConfirmDialog.vue";
+import { importCustomers, exportCustomers } from "@/api/customerApi";
 
 // SEARCH
 const searchTerm = ref("");
-
-// Nhận prop selectedRows từ parent
 const { selectedRows } = defineProps({
   selectedRows: { type: Array, default: () => [] }
 });
 
-const toasts = reactive([]);   // mảng toast
+const toasts = reactive([]);
 const emit = defineEmits(["add", "delete-selected", "search", "filter"]);
 
-// ================= SEARCH =================
-const onSearch = () => {
-  emit("search", searchTerm.value);
-};
-
-// ================= DROPDOWN FILTER =================
+// DROPDOWN
 const dropdownOpen = ref(false);
-const selectedLabel = ref("Tất cả khách hàng"); // default
-
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value;
-};
-
+const selectedLabel = ref("Tất cả khách hàng");
+const toggleDropdown = () => { dropdownOpen.value = !dropdownOpen.value; };
 const selectFilter = (value) => {
   dropdownOpen.value = false;
-
-  if (value === "") selectedLabel.value = "Tất cả khách hàng";
-  else if (value === "VIP") selectedLabel.value = "VIP";
-  else if (value === "LKHA") selectedLabel.value = "Liên kết hợp tác";
-  else if (value === "NBH01") selectedLabel.value = "Nhà bán hàng 01";
-
-  emit("filter", value); // gửi về CustomerView.vue
+  selectedLabel.value = value || "Tất cả khách hàng";
+  emit("filter", value);
 };
 
 // ================= IMPORT FILE =================
 const fileInput = ref(null);
-const triggerFileInput = () => {
-  fileInput.value.click();
-};
+const triggerFileInput = () => fileInput.value.click();
+
+const importConfirm = reactive({
+  show: false,
+  inserted: 0,
+  duplicatePhones: 0,
+  duplicateEmails: 0,
+  fileData: null
+});
 
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
+  event.target.value = "";
+  const formData = new FormData();
+  formData.append("file", file);
+  importConfirm.fileData = formData;
 
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await importCustomers(formData);
-    if (response && response.data) {
-      const { inserted, duplicatePhones, duplicateEmails } = response.data;
-      showToast(`Import thành công! Thêm: ${inserted}`, "add");
-      if (duplicatePhones) showToast(`Trùng số điện thoại: ${duplicatePhones}`, "info");
-      if (duplicateEmails) showToast(`Trùng email: ${duplicateEmails}`, "info");
-    } else {
-      showToast("Import thất bại. Kiểm tra lại file CSV.", "delete");
+    const response = await importCustomers(formData); // BE trả số inserted + duplicate
+    if (response) {
+      const { inserted, duplicatePhones, duplicateEmails } = response;
+      if ((duplicatePhones && duplicatePhones > 0) || (duplicateEmails && duplicateEmails > 0)) {
+        importConfirm.show = true;
+        importConfirm.inserted = inserted;
+        importConfirm.duplicatePhones = duplicatePhones;
+        importConfirm.duplicateEmails = duplicateEmails;
+      } else if (inserted > 0) {
+        // import trực tiếp nếu không duplicate
+        const result = await importCustomers(formData);
+        sessionStorage.setItem("importToast", `Đã thêm ${result.inserted} bản ghi.`);
+        window.location.reload();
+      }
     }
-  } catch (err) {
-    console.error(err);
+  } catch {
     showToast("Có lỗi xảy ra khi import file.", "delete");
-  } finally {
-    event.target.value = "";
   }
 };
 
-// ================= DELETE MULTIPLE =================
-const onDeleteSelected = () => {
-  emit("delete-selected"); // gửi event về parent (View) xử lý xóa bulk
+// ================= CONFIRM DIALOG =================
+const confirmImport = async () => {
+  if (!importConfirm.fileData) return;
+
+  try {
+    const response = await importCustomers(importConfirm.fileData);
+    if (response) {
+      sessionStorage.setItem("importToast", `Import thành công.`);
+      window.location.reload();
+    }
+  } catch {
+    showToast("Lỗi khi import dữ liệu.", "delete");
+  } finally {
+    importConfirm.show = false;
+    importConfirm.fileData = null;
+  }
 };
+
+const downloadExcel = async () => {
+  if (!selectedRows || !selectedRows.length) {
+    showToast("Không có bản ghi nào được chọn để export!", "delete");
+    return;
+  }
+
+  try {
+    // Lấy tất cả customerId từ selectedRows
+   const validIds = selectedRows.filter(id => id);  // loại bỏ null/undefined
+const res = await exportCustomers(validIds, []);
+
+    if (!res || !res.data) {
+      showToast("Dữ liệu export rỗng!", "delete");
+      return;
+    }
+
+    const now = new Date();
+    const fileName = `Export_Customers_${now.getFullYear()}${
+      String(now.getMonth() + 1).padStart(2, "0")
+    }${String(now.getDate()).padStart(2, "0")}_${
+      String(now.getHours()).padStart(2, "0")
+    }${String(now.getMinutes()).padStart(2, "0")}${String(now.getSeconds()).padStart(2, "0")}.xlsx`;
+
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    showToast(`Xuất file Excel thành công! (${selectedRows.length} bản ghi)`, "add");
+  } catch (err) {
+    console.log(err);
+    showToast("Có lỗi khi export Excel!", "delete");
+  }
+};
+
 
 // ================= TOAST =================
 const showToast = (message, type = "info") => {
@@ -204,20 +268,32 @@ const showToast = (message, type = "info") => {
   setTimeout(() => {
     const index = toasts.findIndex(t => t.id === id);
     if (index !== -1) toasts.splice(index, 1);
-  }, 5000);
+  }, 8000);
 };
+
+// toast sau reload
+onMounted(() => {
+  const msg = sessionStorage.getItem("importToast");
+  if (msg) {
+    showToast(msg, "add");
+    sessionStorage.removeItem("importToast");
+  }
+});
+
+// ================= SEARCH + DELETE =================
+const onSearch = () => emit("search", searchTerm.value);
+const onDeleteSelected = () => emit("delete-selected");
+
 </script>
-
-
 <style scoped>
 .filter-dropdown {
   position: absolute;
-  top: 48px;
+  top: 100%;
   left: 16px;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 180px;
+  width: 185px;
   z-index: 1000;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
@@ -225,6 +301,11 @@ const showToast = (message, type = "info") => {
 .filter-item {
   padding: 8px 12px;
   cursor: pointer;
+}
+
+.filter-item.selected {
+  color: #4290f2;
+  font-weight: 500;
 }
 
 .filter-item:hover {
@@ -274,6 +355,7 @@ const showToast = (message, type = "info") => {
   border-radius: 4px;
   justify-content: space-between;
   cursor: pointer;
+  position: relative;
 }
 
 .toolbar-content-right {
@@ -436,6 +518,22 @@ const showToast = (message, type = "info") => {
   background: linear-gradient(90deg, rgba(66, 98, 240, 0.1) 0%, rgba(159, 115, 241, 0.1) 100%), #fff;
 }
 
+.selected-count {
+  display: flex;
+  align-items: center;
+  /* canh giữa theo chiều dọc */
+  font-size: 14px;
+  /* to hơn */
+  font-weight: 500;
+  /* toàn bộ chữ hơi đậm */
+  padding-left: 8px;
+}
+
+.selected-count-text {
+  font-weight: 600;
+  padding-left: 5px;
+  padding-right: 10px;
+}
 
 .statistic-ava-btn {
   background: linear-gradient(90deg, #E7EBFD 0%, #ECE7FD 32.21%, #E5F7FF 66.11%, #FDEFE7 100%);

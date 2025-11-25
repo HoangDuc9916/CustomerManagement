@@ -13,3 +13,4 @@ D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Infrastructure\obj
 D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Infrastructure\obj\Debug\net8.0\refint\MISA.Infrastructure.dll
 D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Infrastructure\obj\Debug\net8.0\MISA.Infrastructure.pdb
 D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Infrastructure\obj\Debug\net8.0\ref\MISA.Infrastructure.dll
+D:\AMisa\MS_FinalProject\backend\MISA.CustomerManagement\MISA.Infrastructure\obj\Debug\net8.0\MISA.Infrastructure.sourcelink.json

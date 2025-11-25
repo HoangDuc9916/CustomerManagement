@@ -17,5 +17,7 @@ namespace MISA.Core.Interfaces.Services
         // Sinh mã khách hàng mới
         string GenerateCustomerCode();
 
+        Task<List<Customer>> ExportCustomersAsync(List<string> ids, List<string> columns);
+
     }
 }
